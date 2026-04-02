@@ -21,7 +21,13 @@ class IntroPage extends StatelessWidget {
                 color: Colors.deepOrange,
               ),
             ),
-            ExtendedImage.asset('/images/start_image.png', width: 200),
+            SizedBox(
+              width: 300,
+              child: ExtendedImage.asset(
+                'images/start_image.png',
+                fit: BoxFit.contain,
+              ),
+            ),
             Text(
               '周りの人と直取引',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
@@ -35,12 +41,12 @@ class IntroPage extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () => {},
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.deepOrange,
+                  ),
                   child: Text(
                     '地域を設定してスタート',
                     style: TextStyle(color: Colors.white),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.deepOrange,
                   ),
                 ),
               ],
