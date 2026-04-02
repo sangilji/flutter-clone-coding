@@ -61,9 +61,18 @@ class RadishApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData(
+        hintColor: Colors.grey[350],
         fontFamily: 'RiiCookie',
         primarySwatch: Colors.deepOrange,
         primaryColor: Colors.deepOrange,
+        inputDecorationTheme: InputDecorationTheme(
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.deepOrange),
+          ),
+        ),
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.deepOrange,
+        ),
         textTheme: TextTheme(
           headlineMedium: TextStyle(fontFamily: 'RiiCookie'),
           labelLarge: TextStyle(color: Colors.white),

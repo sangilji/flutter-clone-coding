@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:practice/screens/start/address_page.dart';
 import 'package:practice/screens/start/intro_page.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _AuthScreenState extends State<AuthScreen> {
         physics: NeverScrollableScrollPhysics(),
         children: [
           IntroPage(_pageController),
-          Container(color: Colors.accents[2]),
+          AddressPage(_pageController),
           Container(color: Colors.accents[5]),
         ],
       ),
