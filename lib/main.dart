@@ -2,8 +2,6 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:practice/router/auth_location.dart';
 import 'package:practice/router/locations.dart';
-import 'package:practice/screens/auth_screen.dart';
-import 'package:practice/screens/home_screen.dart';
 import 'package:practice/screens/splash_screen.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
@@ -32,7 +30,7 @@ class Myapp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Object>(
-      future: Future.delayed(Duration(seconds: 3), () => 100),
+      future: Future.delayed(Duration(seconds: 1), () => 100),
       builder: (context, snapshot) {
         return AnimatedSwitcher(
           duration: Duration(microseconds: 900),
@@ -60,6 +58,15 @@ class RadishApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      theme: ThemeData(
+        fontFamily: 'RiiCookie',
+        primarySwatch: Colors.deepOrange,
+        primaryColor: Colors.deepOrange,
+        textTheme: TextTheme(
+          headlineMedium: TextStyle(fontFamily: 'RiiCookie'),
+          labelLarge: TextStyle(color: Colors.white),
+        ),
+      ),
       debugShowCheckedModeBanner: false,
       routeInformationParser: BeamerParser(),
       routerDelegate: _routerDelegate,

@@ -42,11 +42,11 @@ class IntroPage extends StatelessWidget {
                 TextButton(
                   onPressed: () => {},
                   style: TextButton.styleFrom(
-                    backgroundColor: Colors.deepOrange,
+                    backgroundColor: Theme.of(context).primaryColor,
                   ),
                   child: Text(
                     '地域を設定してスタート',
-                    style: TextStyle(color: Colors.white),
+                    style: Theme.of(context).textTheme.labelLarge,
                   ),
                 ),
               ],
