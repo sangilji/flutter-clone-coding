@@ -1,9 +1,15 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:practice/home_screen.dart';
-import 'package:practice/splash_screen.dart';
+import 'package:practice/router/locations.dart';
+import 'package:practice/screens/home_screen.dart';
+import 'package:practice/screens/splash_screen.dart';
+
+final _routerDelegate = BeamerDelegate(
+  locationBuilder: BeamerLocationBuilder(beamLocations: [HomeLocation()]),
+);
 
 void main() {
-  runApp(Myapp()); // ① SplashScreen 위젯을 첫 화면으로 지정
+  runApp(Myapp());
 }
 
 class Myapp extends StatelessWidget {
@@ -20,7 +26,6 @@ class Myapp extends StatelessWidget {
         );
       },
     );
-
   }
 
   StatelessWidget _splashLoadingWidget(AsyncSnapshot<Object> snapshot) {
@@ -28,12 +33,22 @@ class Myapp extends StatelessWidget {
       print('error');
       return Text('error');
     } else if (snapshot.hasData) {
-      return HomeScreen();
-    } else{
+      return RadishApp();
+    } else {
       return SplashScreen();
     }
-
   }
 }
 
+class RadishApp extends StatelessWidget {
+  const RadishApp({super.key});
 
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      routeInformationParser: BeamerParser(),
+      routerDelegate: _routerDelegate,
+    );
+  }
+}

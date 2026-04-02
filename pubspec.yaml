@@ -36,6 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   extended_image: ^10.0.1
   logger: ^2.7.0
+  beamer: ^1.7.0
+
 
 dev_dependencies:
   flutter_test:
