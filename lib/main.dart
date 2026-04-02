@@ -9,7 +9,9 @@ final _routerDelegate = BeamerDelegate(
   guards: [
     BeamGuard(
       pathPatterns: ['/'],
-      check: (context, location) => false,
+      check: (context, location) {
+        return false;
+      } ,
       beamToNamed: (origin, target) => '/login',
     ),
   ],
