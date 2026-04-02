@@ -1,14 +1,28 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:practice/router/auth_location.dart';
 import 'package:practice/router/locations.dart';
+import 'package:practice/screens/auth_screen.dart';
 import 'package:practice/screens/home_screen.dart';
 import 'package:practice/screens/splash_screen.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 final _routerDelegate = BeamerDelegate(
-  locationBuilder: BeamerLocationBuilder(beamLocations: [HomeLocation()]),
+  guards: [
+    BeamGuard(
+      pathPatterns: ['/'],
+      check: (context, location) => false,
+      beamToNamed: (origin, target) => '/login',
+    ),
+  ],
+
+  locationBuilder: BeamerLocationBuilder(
+    beamLocations: [HomeLocation(), AuthLocation()],
+  ).call,
 );
 
 void main() {
+  setUrlStrategy(PathUrlStrategy());
   runApp(Myapp());
 }
 
