@@ -31,7 +31,7 @@ class IntroPage extends StatelessWidget {
                   width: image,
                   height: image,
                   child: ExtendedImage.asset(
-                    'images/start_image.png',
+                    'assets/images/start_image.png',
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -50,9 +50,6 @@ class IntroPage extends StatelessWidget {
                       onPressed: (){
                         controller.animateToPage(1, duration: Duration(milliseconds: 700), curve: Curves.easeOut);
                       },
-                      style: TextButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
                       child: Text(
                         '地域を設定してスタート',
                         style: Theme.of(context).textTheme.labelLarge,

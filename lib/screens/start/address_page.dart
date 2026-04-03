@@ -13,6 +13,7 @@ class AddressPage extends StatelessWidget {
     return SafeArea(
       minimum: EdgeInsets.all(16.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
             decoration: InputDecoration(
@@ -25,43 +26,31 @@ class AddressPage extends StatelessWidget {
                 borderSide: BorderSide(color: Colors.grey),
               ),
               hintText: '地域名を書いてください。',
-              hintStyle: TextStyle(color: Theme
-                  .of(context)
-                  .hintColor),
+              hintStyle: TextStyle(color: Theme.of(context).hintColor),
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextButton.icon(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  backgroundColor: Theme
-                      .of(context)
-                      .primaryColor,
-                ),
-                icon: Icon(CupertinoIcons.compass, color: Colors.white),
-                label: Text(
-                  '現在位置',
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .labelLarge,
-                ),
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: TextButton.icon(
+              onPressed: () {},
+              icon: Icon(CupertinoIcons.compass, color: Colors.white),
+              label: Text(
+                '現在位置',
+                style: Theme.of(context).textTheme.labelLarge,
               ),
-            ],
+            ),
           ),
           Expanded(
             child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: ExtendedImage.asset('images/img.png'),
-                    title: Text('address $index'),
-                    subtitle: Text('detail $index'),
-                    trailing:Icon(Icons.more),
-                  );
-                }),
+              padding: EdgeInsets.symmetric(vertical: 12),
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text('address $index'),
+                  subtitle: Text('detail $index'),
+                );
+              },
+            ),
           ),
         ],
       ),

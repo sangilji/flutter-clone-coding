@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:practice/screens/start/address_page.dart';
+import 'package:practice/screens/start/auth_page.dart';
 import 'package:practice/screens/start/intro_page.dart';
 
-class AuthScreen extends StatefulWidget {
+class StartScreen extends StatefulWidget {
 
-  const AuthScreen({super.key});
+  const StartScreen({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  State<StartScreen> createState() => _StartScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _StartScreenState extends State<StartScreen> {
   final PageController _pageController = PageController();
 
   @override
@@ -19,11 +20,11 @@ class _AuthScreenState extends State<AuthScreen> {
       backgroundColor: Colors.white,
       body: PageView(
         controller: _pageController,
-        physics: NeverScrollableScrollPhysics(),
+        // physics: NeverScrollableScrollPhysics(),
         children: [
           IntroPage(_pageController),
           AddressPage(_pageController),
-          Container(color: Colors.accents[5]),
+          AuthPage(),
         ],
       ),
     );

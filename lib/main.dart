@@ -1,25 +1,61 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:practice/router/auth_location.dart';
 import 'package:practice/router/locations.dart';
+import 'package:practice/screens/home_screen.dart';
 import 'package:practice/screens/splash_screen.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:practice/screens/start_screen.dart';
+import 'package:practice/states/user_provider.dart';
+import 'package:provider/provider.dart';
 
-final _routerDelegate = BeamerDelegate(
-  guards: [
-    BeamGuard(
-      pathPatterns: ['/'],
-      check: (context, location) {
-        return false;
-      } ,
-      beamToNamed: (origin, target) => '/login',
+final UserProvider userProvider = UserProvider();
+
+final _router = GoRouter(
+  routes: [
+    GoRoute(path: '/', name: 'home', builder: (context, state) => HomeScreen()),
+    GoRoute(
+      path: '/login',
+      name: 'login',
+      builder: (context, state) => StartScreen(),
     ),
   ],
+  refreshListenable: userProvider,
+  redirect: (context, state) {
+    final loggedIn = userProvider.userState;
+    final goingToLogin = state.uri.toString() == '/login';
 
-  locationBuilder: BeamerLocationBuilder(
-    beamLocations: [HomeLocation(), AuthLocation()],
-  ).call,
+    if (!loggedIn && !goingToLogin) {
+      return '/login';
+    }
+
+    if (loggedIn && goingToLogin) {
+      return '/';
+    }
+
+    return null;
+  },
 );
+
+// final _routerDelegate = BeamerDelegate(
+//   guards: [
+//     BeamGuard(
+//       pathPatterns: ['/'],
+//       check: (context, location) {
+//         return context
+//             .watch<UserProvider>()
+//             .userState;
+//       },
+//       // showPage: BeamPage(child: StartScreen()),
+//       beamToNamed: (origin, target) => '/login',
+//     ),
+//   ],
+//
+//   locationBuilder: BeamerLocationBuilder(
+//     beamLocations: [HomeLocation(), AuthLocation()],
+//   ).call,
+// );
 
 void main() {
   setUrlStrategy(PathUrlStrategy());
@@ -59,28 +95,47 @@ class RadishApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      theme: ThemeData(
-        hintColor: Colors.grey[350],
-        fontFamily: 'RiiCookie',
-        primarySwatch: Colors.deepOrange,
-        primaryColor: Colors.deepOrange,
-        inputDecorationTheme: InputDecorationTheme(
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.deepOrange),
+    return ChangeNotifierProvider.value(
+      value: userProvider,
+      child: MaterialApp.router(
+        theme: ThemeData(
+          hintColor: Colors.grey[350],
+          // fontFamily: 'RiiCookie',
+          primarySwatch: Colors.deepOrange,
+          primaryColor: Colors.deepOrange,
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.deepOrange,
+              foregroundColor: Colors.white,
+              minimumSize: Size(48, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.deepOrange),
+            ),
+          ),
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: Colors.deepOrange,
+          ),
+          textTheme: TextTheme(
+            // headlineMedium: TextStyle(fontFamily: 'RiiCookie'),
+            labelLarge: TextStyle(color: Colors.white),
+          ),
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.white,
+            titleTextStyle: TextStyle(color: Colors.black87),
+            elevation: 2,
           ),
         ),
-        textSelectionTheme: TextSelectionThemeData(
-          cursorColor: Colors.deepOrange,
-        ),
-        textTheme: TextTheme(
-          headlineMedium: TextStyle(fontFamily: 'RiiCookie'),
-          labelLarge: TextStyle(color: Colors.white),
-        ),
+        debugShowCheckedModeBanner: false,
+        routeInformationProvider: _router.routeInformationProvider,
+        routeInformationParser: _router.routeInformationParser,
+        routerDelegate: _router.routerDelegate,
       ),
-      debugShowCheckedModeBanner: false,
-      routeInformationParser: BeamerParser(),
-      routerDelegate: _routerDelegate,
     );
   }
 }
