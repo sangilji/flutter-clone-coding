@@ -129,6 +129,7 @@ class RadishApp extends StatelessWidget {
             backgroundColor: Colors.white,
             titleTextStyle: TextStyle(color: Colors.black87),
             elevation: 2,
+            actionsIconTheme: IconThemeData(color: Colors.black),
           ),
         ),
         debugShowCheckedModeBanner: false,
