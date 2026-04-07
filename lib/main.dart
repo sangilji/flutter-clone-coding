@@ -1,8 +1,5 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:practice/router/auth_location.dart';
-import 'package:practice/router/locations.dart';
 import 'package:practice/screens/home_screen.dart';
 import 'package:practice/screens/splash_screen.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
@@ -132,6 +129,10 @@ class RadishApp extends StatelessWidget {
             elevation: 2,
             actionsIconTheme: IconThemeData(color: Colors.black),
           ),
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            selectedItemColor: Colors.black87,
+            unselectedItemColor: Colors.black38,
+          )
         ),
         debugShowCheckedModeBanner: false,
         routeInformationProvider: _router.routeInformationProvider,
