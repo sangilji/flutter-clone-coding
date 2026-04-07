@@ -122,6 +122,9 @@ class RadishApp extends StatelessWidget {
           textTheme: TextTheme(
             // headlineMedium: TextStyle(fontFamily: 'RiiCookie'),
             labelLarge: TextStyle(color: Colors.white),
+            titleSmall:TextStyle(fontSize: 13,color: Colors.black38),
+            titleMedium:TextStyle(fontSize: 20,color: Colors.black87),
+
           ),
           appBarTheme: AppBarTheme(
             backgroundColor: Colors.white,
