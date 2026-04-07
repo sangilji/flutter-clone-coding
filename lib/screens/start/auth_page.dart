@@ -5,7 +5,9 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:practice/constants/common_size.dart';
 import 'package:practice/states/user_provider.dart';
+import 'package:practice/utils/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -50,10 +52,23 @@ class _AuthPageState extends State<AuthPage> {
     context.go('/');
   }
 
+  _getAddress() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String address = prefs.getString('address') ?? "";
+    logger.d('address : $address');
+  }
+
+  @override
+  void dispose() {
+    _phoneNumberController.dispose();
+    _verifyNumberController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return IgnorePointer(
-    ignoring: _verificationStatus == VerificationStatus.verifying,
+      ignoring: _verificationStatus == VerificationStatus.verifying,
       child: Form(
         key: _formKey,
         child: LayoutBuilder(
@@ -68,92 +83,104 @@ class _AuthPageState extends State<AuthPage> {
                 ),
                 elevation: AppBarTheme.of(context).elevation,
               ),
-              body: Padding(
-                padding: const EdgeInsets.all(common_bg_padding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        ExtendedImage.asset(
-                          'assets/images/img.png',
-                          width: size.width * 0.2,
-                          height: size.height * 0.2,
-                        ),
-                        SizedBox(width: common_bg_padding),
-                        Text(
-                          'キャロットマーケットは電話番号で\n'
-                          '会員登録を行っております。\n'
-                          '皆様の個人情報を安全に取扱い、\n'
-                          '外部に漏出されません。',
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: common_bg_padding),
-                    TextFormField(
-                      controller: _phoneNumberController,
-                      validator: (phoneNumber) {
-                        if (phoneNumber != null && phoneNumber.length == 13) {
-                          return null;
-                        } else {
-                          return '電話番号が正しくないです。';
-                        }
-                      },
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: [MaskedInputFormatter('000 0000 0000')],
-
-                      decoration: InputDecoration(
-                        border: inputBorder,
-                        focusedBorder: inputBorder,
-                        hintText: '080 1234 5678',
-                        hintStyle: TextStyle(color: Theme.of(context).hintColor),
+              body: GestureDetector(
+                onTap: FocusScope.of(context).unfocus,
+                child: Padding(
+                  padding: const EdgeInsets.all(common_bg_padding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          ExtendedImage.asset(
+                            'assets/images/img.png',
+                            width: size.width * 0.2,
+                            height: size.height * 0.2,
+                          ),
+                          SizedBox(width: common_bg_padding),
+                          Text(
+                            'キャロットマーケットは電話番号で\n'
+                            '会員登録を行っております。\n'
+                            '皆様の個人情報を安全に取扱い、\n'
+                            '外部に漏出されません。',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ],
                       ),
-                    ),
-                    SizedBox(height: common_sm_padding),
-                    TextButton(
-                      onPressed: () {
-                        if (_formKey.currentState != null) {
-                          bool passed = _formKey.currentState!.validate();
-
-                          if (passed) {
-                            setState(() {
-                              _verificationStatus = VerificationStatus.codeSent;
-                            });
+                      SizedBox(height: common_bg_padding),
+                      TextFormField(
+                        controller: _phoneNumberController,
+                        validator: (phoneNumber) {
+                          if (phoneNumber != null && phoneNumber.length == 13) {
+                            return null;
+                          } else {
+                            return '電話番号が正しくないです。';
                           }
-                        }
-                      },
-                      child: Text('暗証番号転送'),
-                    ),
-                    SizedBox(height: common_bg_padding),
-                    AnimatedOpacity(
-                      opacity: _verificationStatus == VerificationStatus.none
-                          ? 0
-                          : 1,
-                      duration: Duration(milliseconds: 300),
-                      child: AnimatedContainer(
-                        duration: Duration(seconds: 1),
-                        height: getVerificationHeight(_verificationStatus),
-                        child: TextFormField(
-                          controller: _verifyNumberController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [MaskedInputFormatter('000000')],
+                        },
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [MaskedInputFormatter('000 0000 0000')],
 
-                          decoration: InputDecoration(
-                            border: inputBorder,
-                            focusedBorder: inputBorder,
+                        decoration: InputDecoration(
+                          border: inputBorder,
+                          focusedBorder: inputBorder,
+                          hintText: '080 1234 5678',
+                          hintStyle: TextStyle(
+                            color: Theme.of(context).hintColor,
                           ),
                         ),
                       ),
-                    ),
-                    AnimatedContainer(
-                      duration: Duration(seconds: 1),
-                      height: getVerificationHeight(_verificationStatus),
-                      child: TextButton(onPressed: () {
-                        attemptVerify();
-                      }, child: _verificationStatus == VerificationStatus.verifying?CircularProgressIndicator(color: Colors.white):Text('暗証番号確認')),
-                    ),
-                  ],
+                      SizedBox(height: common_sm_padding),
+                      TextButton(
+                        onPressed: () {
+                          _getAddress();
+                          if (_formKey.currentState != null) {
+                            bool passed = _formKey.currentState!.validate();
+
+                            if (passed) {
+                              setState(() {
+                                _verificationStatus = VerificationStatus.codeSent;
+                              });
+                            }
+                          }
+                        },
+                        child: Text('暗証番号転送'),
+                      ),
+                      SizedBox(height: common_bg_padding),
+                      AnimatedOpacity(
+                        opacity: _verificationStatus == VerificationStatus.none
+                            ? 0
+                            : 1,
+                        duration: Duration(milliseconds: 300),
+                        child: AnimatedContainer(
+                          duration: Duration(seconds: 1),
+                          height: getVerificationHeight(_verificationStatus),
+                          child: TextFormField(
+                            controller: _verifyNumberController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [MaskedInputFormatter('000000')],
+
+                            decoration: InputDecoration(
+                              border: inputBorder,
+                              focusedBorder: inputBorder,
+                            ),
+                          ),
+                        ),
+                      ),
+                      AnimatedContainer(
+                        duration: Duration(seconds: 1),
+                        height: getVerificationHeight(_verificationStatus),
+                        child: TextButton(
+                          onPressed: () {
+                            attemptVerify();
+                          },
+                          child:
+                              _verificationStatus == VerificationStatus.verifying
+                              ? CircularProgressIndicator(color: Colors.white)
+                              : Text('暗証番号確認'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

@@ -1,18 +1,22 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class IntroPage extends StatelessWidget {
-  PageController controller;
+class IntroPage extends StatefulWidget {
+  IntroPage({super.key});
 
-  IntroPage(this.controller, {super.key});
+  @override
+  State<IntroPage> createState() => _IntroPageState();
+}
 
+class _IntroPageState extends State<IntroPage> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         Size size = MediaQuery.of(context).size;
-        final image = size.width-32;
+        final image = size.width - 32;
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -47,8 +51,12 @@ class IntroPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     TextButton(
-                      onPressed: (){
-                        controller.animateToPage(1, duration: Duration(milliseconds: 700), curve: Curves.easeOut);
+                      onPressed: () async {
+                        context.read<PageController>().animateToPage(
+                          1,
+                          duration: Duration(milliseconds: 700),
+                          curve: Curves.easeOut,
+                        );
                       },
                       child: Text(
                         '地域を設定してスタート',

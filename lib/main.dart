@@ -58,6 +58,7 @@ final _router = GoRouter(
 // );
 
 void main() {
+  Provider.debugCheckInvalidValueType = null;
   setUrlStrategy(PathUrlStrategy());
   runApp(Myapp());
 }
@@ -127,7 +128,7 @@ class RadishApp extends StatelessWidget {
           ),
           appBarTheme: AppBarTheme(
             backgroundColor: Colors.white,
-            titleTextStyle: TextStyle(color: Colors.black87),
+            titleTextStyle: TextStyle(color: Colors.black87,fontSize: 18,fontWeight: FontWeight.w700),
             elevation: 2,
             actionsIconTheme: IconThemeData(color: Colors.black),
           ),
