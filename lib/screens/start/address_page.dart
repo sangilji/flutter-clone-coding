@@ -1,12 +1,30 @@
+import 'dart:math';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
+import 'package:practice/data/address_model.dart';
+import 'package:practice/data/address_point_model.dart' hide Location;
+import 'package:practice/screens/start/address_service.dart';
 import 'package:practice/utils/logger.dart';
 
-class AddressPage extends StatelessWidget {
+class AddressPage extends StatefulWidget {
   PageController controller;
 
   AddressPage(this.controller, {super.key});
+
+  @override
+  State<AddressPage> createState() => _AddressPageState();
+}
+
+class _AddressPageState extends State<AddressPage> {
+  TextEditingController _addressController = TextEditingController();
+
+  AddressModel? _addressModel;
+  AddressPointModel? _addressPointModel;
+  bool isPoint = false;
+  bool _isGettingLocation = false;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +34,15 @@ class AddressPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
+            onFieldSubmitted: (text) async {
+              _addressModel=null;
+              _addressPointModel=null;
+              _addressModel = await AddressService().searchAddressByStr(text);
+              setState(() {
+                isPoint = false;
+              });
+            },
+            controller: _addressController,
             decoration: InputDecoration(
               prefixIcon: Icon(Icons.search, color: Colors.grey),
               prefixIconConstraints: BoxConstraints(
@@ -25,17 +52,63 @@ class AddressPage extends StatelessWidget {
               border: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey),
               ),
-              hintText: '地域名を書いてください。',
+              hintText: '郵便番号を書いてください。',
               hintStyle: TextStyle(color: Theme.of(context).hintColor),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 12),
             child: TextButton.icon(
-              onPressed: () {},
-              icon: Icon(CupertinoIcons.compass, color: Colors.white),
-              label: Text(
-                '現在位置',
+              onPressed: () async {
+                _addressModel=null;
+                _addressPointModel=null;
+                setState(() {
+                  _isGettingLocation = true;
+                  isPoint = true;
+                });
+                Location location = Location();
+
+                bool serviceEnabled;
+                PermissionStatus permissionGranted;
+                LocationData locationData;
+
+                serviceEnabled = await location.serviceEnabled();
+                if (!serviceEnabled) {
+                  serviceEnabled = await location.requestService();
+                  if (!serviceEnabled) {
+                    return;
+                  }
+                }
+
+                permissionGranted = await location.hasPermission();
+                if (permissionGranted == PermissionStatus.denied) {
+                  permissionGranted = await location.requestPermission();
+                  if (permissionGranted != PermissionStatus.granted) {
+                    return;
+                  }
+                }
+
+                locationData = await location.getLocation();
+                logger.d(locationData);
+                _addressPointModel = await AddressService()
+                    .findAddressByCoordinate(
+                      log: locationData.longitude!,
+                      lat: locationData.latitude!,
+                    );
+                logger.d(_addressPointModel?.response?.location);
+                setState(() {
+                  _isGettingLocation = false;
+                });
+              },
+              icon: _isGettingLocation
+                  ? SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(color: Colors.white),
+                    )
+                  : Icon(CupertinoIcons.compass, color: Colors.white),
+              label: Text(_isGettingLocation?
+                '検索中...':'現在位置',
                 style: Theme.of(context).textTheme.labelLarge,
               ),
             ),
@@ -43,11 +116,43 @@ class AddressPage extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.symmetric(vertical: 12),
-              itemCount: 10,
+              itemCount: isPoint
+                  ? _addressPointModel == null ||
+                            _addressPointModel!.response == null ||
+                            _addressPointModel!.response!.location == null
+                        ? 0
+                        : _addressPointModel!.response!.location!.length
+                  : _addressModel == null || _addressModel!.results == null
+                  ? 0
+                  : _addressModel!.results!.length,
               itemBuilder: (context, index) {
+                if (isPoint) {
+                  if (_addressPointModel == null ||
+                      _addressPointModel!.response == null ||
+                      _addressPointModel!.response!.location == null ||
+                      _addressPointModel!.response!.location![index].town ==
+                          null)
+                    return Container();
+
+                  return ListTile(
+                    title: Text(
+                      '${_addressPointModel!.response!.location![index].prefecture} ${_addressPointModel!.response!.location![index].city} ${_addressPointModel!.response!.location![index].town}',
+                    ),
+                    subtitle: Text(
+                      '${_addressPointModel!.response!.location![index].postal}',
+                    ),
+                  );
+                }
+                if (_addressModel == null ||
+                    _addressModel!.results == null ||
+                    _addressModel!.results![index].zipcode == null)
+                  return Container();
+
                 return ListTile(
-                  title: Text('address $index'),
-                  subtitle: Text('detail $index'),
+                  title: Text(
+                    '${_addressModel!.results![index].address1} ${_addressModel!.results![index].address2} ${_addressModel!.results![index].address3}',
+                  ),
+                  subtitle: Text('${_addressModel!.results![index].zipcode}'),
                 );
               },
             ),

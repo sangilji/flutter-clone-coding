@@ -82,7 +82,7 @@ class _AuthPageState extends State<AuthPage> {
                         ),
                         SizedBox(width: common_bg_padding),
                         Text(
-                          'ニンジンマーケットは電話番号で\n'
+                          'キャロットマーケットは電話番号で\n'
                           '会員登録を行っております。\n'
                           '皆様の個人情報を安全に取扱い、\n'
                           '外部に漏出されません。',

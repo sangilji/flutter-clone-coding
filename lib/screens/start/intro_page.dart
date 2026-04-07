@@ -20,7 +20,7 @@ class IntroPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(
-                  'ニンジンマーケット',
+                  'キャロットマーケット',
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -40,7 +40,7 @@ class IntroPage extends StatelessWidget {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  'ニンジンマーケットは直取引マーケットです。\n地域を設定して始めましょう！',
+                  'キャロットマーケットは直取引マーケットです。\n地域を設定して始めましょう！',
                   style: TextStyle(fontSize: 13),
                 ),
                 Column(
