@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:practice/screens/home_screen.dart';
@@ -56,17 +57,25 @@ final _router = GoRouter(
 
 void main() {
   Provider.debugCheckInvalidValueType = null;
+  WidgetsFlutterBinding.ensureInitialized();
   setUrlStrategy(PathUrlStrategy());
   runApp(Myapp());
 }
 
-class Myapp extends StatelessWidget {
+class Myapp extends StatefulWidget {
   const Myapp({super.key});
 
   @override
+  State<Myapp> createState() => _MyappState();
+}
+
+class _MyappState extends State<Myapp> {
+
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Object>(
-      future: Future.delayed(Duration(seconds: 1), () => 100),
+    return FutureBuilder(
+      future: _initialization,
       builder: (context, snapshot) {
         return AnimatedSwitcher(
           duration: Duration(microseconds: 900),
@@ -76,11 +85,11 @@ class Myapp extends StatelessWidget {
     );
   }
 
-  StatelessWidget _splashLoadingWidget(AsyncSnapshot<Object> snapshot) {
+  StatelessWidget _splashLoadingWidget(AsyncSnapshot<Object?> snapshot) {
     if (snapshot.hasError) {
       print('error');
       return Text('error');
-    } else if (snapshot.hasData) {
+    } else if (snapshot.connectionState == ConnectionState.done) {
       return RadishApp();
     } else {
       return SplashScreen();
