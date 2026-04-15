@@ -21,14 +21,14 @@ final _router = GoRouter(
   ],
   refreshListenable: userProvider,
   redirect: (context, state) {
-    final loggedIn = userProvider.userState;
+    final loggedIn = userProvider.user;
     final goingToLogin = state.uri.toString() == '/login';
 
-    if (!loggedIn && !goingToLogin) {
+    if (loggedIn == null && !goingToLogin) {
       return '/login';
     }
 
-    if (loggedIn && goingToLogin) {
+    if (loggedIn !=null && goingToLogin) {
       return '/';
     }
 
